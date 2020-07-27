@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/firstFragment"
+        android:title="Weather" android:icon="@drawable/ic_cloud" />
+    <item
+        android:id="@+id/secondFragment"
+        android:title="Discover" android:icon="@drawable/ic_rocket"/>
+    <item
+        android:id="@+id/thirdFragment"
+        android:title="Profile" android:icon="@drawable/ic_person"/>
+</menu>
