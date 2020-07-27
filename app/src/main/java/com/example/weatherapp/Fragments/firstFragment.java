@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.Fragments;
 
 import android.os.Bundle;
 
@@ -8,13 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.weatherapp.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FirstFragment extends Fragment {
+public class firstFragment extends Fragment {
 
-    public FirstFragment() {
+    public firstFragment() {
         // Required empty public constructor
     }
 
