@@ -29,7 +29,7 @@
         app:layout_constraintVertical_bias="0.146" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/locButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Location"
@@ -41,7 +41,7 @@
         app:layout_constraintVertical_bias="0.843" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/locView"
         android:layout_width="94dp"
         android:layout_height="56dp"
         android:text="TextView"
