@@ -27,4 +27,8 @@ public class firstFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_first, container, false);
     }
+
+    public void setLocation(){
+        //TODO implement location display
+    }
 }
