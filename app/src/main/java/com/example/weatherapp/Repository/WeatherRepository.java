@@ -26,9 +26,8 @@ public class WeatherRepository {
     }
 
     //test method
-    public Weather setWeather(){
+    public void setWeather(){
         weather = new Weather(800,"Clear","clear sky","01n");
-        return weather;
     }
 
 }
