@@ -9,6 +9,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.weatherapp.Models.Weather;
 import com.example.weatherapp.ViewModels.WeatherViewModel;
@@ -30,7 +31,10 @@ public class MainActivity extends AppCompatActivity {
         weatherViewModel.getCurrentWeather().observe(this, new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
-
+                int duration = Toast.LENGTH_SHORT;
+                CharSequence msg = "Weather Updated";
+                Toast toast = Toast.makeText(getApplicationContext(),msg,duration);
+                toast.show();
             }
         });
         //TODO implement weather view
