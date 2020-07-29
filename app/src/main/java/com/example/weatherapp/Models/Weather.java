@@ -2,12 +2,12 @@ package com.example.weatherapp.Models;
 
 public class Weather {
     private int id;
-    private String main,decription,icon;
+    private String main,description,icon;
 
-    public Weather(int id, String main, String decription, String icon) {
+    public Weather(int id, String main, String description, String icon) {
         this.id = id;
         this.main = main;
-        this.decription = decription;
+        this.description = description;
         this.icon = icon;
     }
 
@@ -27,12 +27,12 @@ public class Weather {
         this.main = main;
     }
 
-    public String getDecription() {
-        return decription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDecription(String decription) {
-        this.decription = decription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getIcon() {

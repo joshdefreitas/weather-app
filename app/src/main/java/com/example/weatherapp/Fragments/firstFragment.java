@@ -75,7 +75,6 @@ public class firstFragment extends Fragment {
                 public void onChanged(Weather weather) {
                     wID.setText(String.valueOf(weather.getId()));
                     wMain.setText(weather.getMain());
-
                 }
             });
         }
