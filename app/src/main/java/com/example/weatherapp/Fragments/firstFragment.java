@@ -17,8 +17,11 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.weatherapp.Models.Weather;
+import com.example.weatherapp.Models.WeatherReport;
 import com.example.weatherapp.R;
 import com.example.weatherapp.ViewModels.WeatherViewModel;
+
+import java.util.Objects;
 
 
 /**
@@ -28,13 +31,15 @@ public class firstFragment extends Fragment {
     private TextView locText,wID,wMain;
     private Button locButton;
     private String currentLoc = "London";
-    WeatherViewModel weatherViewModel;
+    private WeatherViewModel weatherViewModel;
+    private String isNull = "null";
+    private String notNull = " not null";
 
     public firstFragment() {
         // Required empty public constructor
     }
 
-
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,15 +73,20 @@ public class firstFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(getActivity() != null){
-            weatherViewModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
-            weatherViewModel.getCurrentWeather().observe(getViewLifecycleOwner(), new Observer<Weather>() {
-                @Override
-                public void onChanged(Weather weather) {
-                    wID.setText(String.valueOf(weather.getId()));
-                    wMain.setText(weather.getMain());
+
+        weatherViewModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
+        weatherViewModel.getCurrentWeather().observe(getViewLifecycleOwner(), new Observer<WeatherReport>() {
+            @Override
+            public void onChanged(@Nullable WeatherReport weatherReport) {
+                //TODO implement
+                if(weatherReport == null){
+                    wID.setText(isNull);
                 }
-            });
-        }
+                else
+                    wID.setText(weatherReport.getmName());
+
+            }
+        });
+
     }
 }
