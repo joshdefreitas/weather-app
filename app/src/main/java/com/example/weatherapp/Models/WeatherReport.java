@@ -2,11 +2,13 @@ package com.example.weatherapp.Models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class WeatherReport {
     @SerializedName("coord")
     private Coord mCoord;
     @SerializedName("weather")
-    private Weather mWeather;
+    private List<Weather> mWeather;
     @SerializedName("base")
     private String mBase;
     @SerializedName("main")
@@ -27,7 +29,7 @@ public class WeatherReport {
     @SerializedName("code")
     private int mCode;
 
-    public WeatherReport(Coord mCoord, Weather mWeather, String mBase, Main mMain, Wind mWind, Cloud mClouds, int mDt, Sys mSys, int mTimezone, int miD, String mName, int mCode) {
+    public WeatherReport(Coord mCoord, List<Weather> mWeather, String mBase, Main mMain, Wind mWind, Cloud mClouds, int mDt, Sys mSys, int mTimezone, int miD, String mName, int mCode) {
         this.mCoord = mCoord;
         this.mWeather = mWeather;
         this.mBase = mBase;
@@ -50,11 +52,11 @@ public class WeatherReport {
         this.mCoord = mCoord;
     }
 
-    public Weather getmWeather() {
+    public List<Weather> getmWeather() {
         return mWeather;
     }
 
-    public void setmWeather(Weather mWeather) {
+    public void setmWeather(List<Weather> mWeather) {
         this.mWeather = mWeather;
     }
 
