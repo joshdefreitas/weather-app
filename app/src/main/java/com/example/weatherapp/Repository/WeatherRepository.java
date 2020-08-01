@@ -3,6 +3,7 @@ package com.example.weatherapp.Repository;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.weatherapp.Models.Cloud;
@@ -26,6 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class WeatherRepository {
     private static WeatherRepository instance;
     MutableLiveData<WeatherReport> weatherReport = new MutableLiveData<>();
+
     private String URL = "https://api.openweathermap.org/";
 
     public static WeatherRepository getInstance(){
@@ -74,7 +76,7 @@ public class WeatherRepository {
 
             @Override
             public void onFailure(Call<WeatherReport> call, Throwable t) {
-                Log.d("Error",t.getMessage());
+                Log.d("Error", t.getMessage());
             }
         });
 

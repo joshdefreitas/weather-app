@@ -1,9 +1,15 @@
 package com.example.weatherapp.Fragments;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -30,10 +36,10 @@ import java.util.Objects;
 public class firstFragment extends Fragment {
     private TextView locText,wID,wMain;
     private Button locButton;
+    private Button upButton;
     private String currentLoc = "London";
     private WeatherViewModel weatherViewModel;
-    private String isNull = "null";
-    private String notNull = " not null";
+    private int LOCATION_PERMISSION_CODE = 1;
 
     public firstFragment() {
         // Required empty public constructor
@@ -47,6 +53,7 @@ public class firstFragment extends Fragment {
         // Inflate the layout for this fragment
         locText = v.findViewById(R.id.locView);
         locButton = v.findViewById(R.id.locButton);
+        upButton = v.findViewById(R.id.updateButton);
         wID = v.findViewById(R.id.wIDView);
         wMain = v.findViewById(R.id.wMainView);
 
@@ -56,11 +63,25 @@ public class firstFragment extends Fragment {
                 locText.setText(currentLoc);
             }
         });
-        return v;
-    }
 
-    public void setLocation(){
-        //TODO implement location display
+        upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getContext(), "You have already granted this permission!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    requestLocationPermission();
+                }
+            }
+        });
+
+
+
+
+
+        return v;
     }
 
     @Override
@@ -78,9 +99,8 @@ public class firstFragment extends Fragment {
         weatherViewModel.getCurrentWeather().observe(getViewLifecycleOwner(), new Observer<WeatherReport>() {
             @Override
             public void onChanged(@Nullable WeatherReport weatherReport) {
-                //TODO implement
                 if(weatherReport == null){
-                    wID.setText(isNull);
+                    //TODO implement
                 }
                 else
                     wID.setText(weatherReport.getmName());
@@ -88,5 +108,52 @@ public class firstFragment extends Fragment {
             }
         });
 
+
+
+    }
+
+    public void setLocation(){
+        //TODO implement location display
+    }
+
+    public void updateWeather(){
+        //TODO implement update weather
+    }
+
+    private void requestLocationPermission(){
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Permission needed")
+                    .setMessage("This permission is needed because of this and that")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(getActivity(),
+                                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+        } else {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_PERMISSION_CODE)  {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getActivity(), "Permission GRANTED", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
