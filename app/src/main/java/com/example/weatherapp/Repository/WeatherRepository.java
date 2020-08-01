@@ -27,6 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class WeatherRepository {
     private static WeatherRepository instance;
     MutableLiveData<WeatherReport> weatherReport = new MutableLiveData<>();
+    MutableLiveData<Coord> locationRepo = new MutableLiveData<>();
 
     private String URL = "https://api.openweathermap.org/";
 
@@ -41,14 +42,16 @@ public class WeatherRepository {
     public MutableLiveData<WeatherReport> getWeatherReport(){
 
         retrieveWeatherReport();
-//        MutableLiveData<WeatherReport> data = new MutableLiveData<>();
-//        data.setValue(weatherReport);
-//        return data;
         return weatherReport;
     }
 
+    public MutableLiveData<Coord> getLocation(){
+        retrieveLocation();
+        return locationRepo;
+    }
+
     //retrieves report from api
-    public void retrieveWeatherReport(){
+    private void retrieveWeatherReport(){
         //weatherReport = new WeatherReport(800,"Clear","clear sky","01n");
         //TODO implement
 
@@ -81,6 +84,10 @@ public class WeatherRepository {
         });
 
 
+
+    }
+
+    private void retrieveLocation() {
 
     }
 

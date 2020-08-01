@@ -67,13 +67,7 @@ public class firstFragment extends Fragment {
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getContext(), "You have already granted this permission!",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    requestLocationPermission();
-                }
+                updateLocation();
             }
         });
 
@@ -102,9 +96,10 @@ public class firstFragment extends Fragment {
                 if(weatherReport == null){
                     //TODO implement
                 }
-                else
+                else{
                     wID.setText(weatherReport.getmName());
-
+                    wMain.setText(weatherReport.getmWeather().get(0).getDescription());
+                }
             }
         });
 
@@ -112,9 +107,7 @@ public class firstFragment extends Fragment {
 
     }
 
-    public void setLocation(){
-        //TODO implement location display
-    }
+
 
     public void updateWeather(){
         //TODO implement update weather
@@ -143,6 +136,16 @@ public class firstFragment extends Fragment {
         } else {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+        }
+    }
+
+    private void updateLocation(){
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getContext(), "You have already granted this permission!",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            requestLocationPermission();
         }
     }
 
