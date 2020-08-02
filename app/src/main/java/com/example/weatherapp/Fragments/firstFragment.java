@@ -46,11 +46,11 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class firstFragment extends Fragment {
-    private TextView locText,wID,wMain;
+    private TextView locText,wID,wMain,lLat,lLon;
     private Button locButton;
     private Button upButton;
-    Double Lat,Lon;
-    private Coord currentLoc;
+    private double Lat,Lon;
+    private Coord currentLoc = new Coord(0.000,0.000);
     private WeatherViewModel weatherViewModel;
     private LocationViewModel locationViewModel;
     private int LOCATION_PERMISSION_CODE = 1;
@@ -71,6 +71,8 @@ public class firstFragment extends Fragment {
         upButton = v.findViewById(R.id.updateButton);
         wID = v.findViewById(R.id.wIDView);
         wMain = v.findViewById(R.id.wMainView);
+        lLat = v.findViewById(R.id.latView);
+        lLon = v.findViewById(R.id.lonView);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -111,7 +113,8 @@ public class firstFragment extends Fragment {
                 }
                 else{
                     wID.setText(weatherReport.getmName());
-                    wMain.setText(weatherReport.getmWeather().get(0).getDescription());
+                    wMain.setText(String.valueOf(weatherReport.getmMain().getTemp()));
+                    locText.setText(weatherReport.getmName());
                 }
             }
         });
@@ -177,8 +180,10 @@ public class firstFragment extends Fragment {
         locationViewModel.getLocation().observe(getViewLifecycleOwner(), new Observer<Coord>() {
             @Override
             public void onChanged(Coord coord) {
-                currentLoc = coord;
-                locText.setText("Lon: "+String.valueOf(currentLoc.getLon())+"\nLat: "+String.valueOf(currentLoc.getLat()));
+                lLat.setText(String.valueOf(coord.getLat()));
+                lLon.setText(String.valueOf(coord.getLon()));
+                firstFragment.this.currentLoc.setLon(coord.getLon());
+                firstFragment.this.currentLoc.setLat(coord.getLat());
             }
         });
 

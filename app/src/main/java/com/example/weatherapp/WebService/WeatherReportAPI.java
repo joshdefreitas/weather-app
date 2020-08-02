@@ -13,6 +13,7 @@ public interface WeatherReportAPI {
     Call<WeatherReport> getReport(
             @Query("lat") double lat,
             @Query("lon") double lon,
-            @Query("appid") String APIKey
+            @Query("appid") String APIKey,
+            @Query("units") String unit
     );
 }
