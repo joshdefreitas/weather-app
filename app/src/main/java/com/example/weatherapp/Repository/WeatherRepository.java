@@ -104,7 +104,7 @@ public class WeatherRepository {
                 .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-                        Coord coord = new Coord((float)location.getLongitude(),(float)location.getLatitude());
+                        Coord coord = new Coord(location.getLongitude(),location.getLatitude());
                         locationR.setValue(coord);
                     }
                 });
