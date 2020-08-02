@@ -1,12 +1,43 @@
 package com.example.weatherapp.Repository;
 
+import android.app.Activity;
+import android.content.Context;
+import android.location.Location;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.weatherapp.MainActivity;
+import com.example.weatherapp.Models.Cloud;
+import com.example.weatherapp.Models.Coord;
+import com.example.weatherapp.Models.Main;
+import com.example.weatherapp.Models.Sys;
 import com.example.weatherapp.Models.Weather;
+import com.example.weatherapp.Models.WeatherReport;
+import com.example.weatherapp.WebService.WeatherReportAPI;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WeatherRepository {
     private static WeatherRepository instance;
-    private Weather weather;
+    MutableLiveData<WeatherReport> weatherReport = new MutableLiveData<>();
+    MutableLiveData<Coord> locationR = new MutableLiveData<>();
+
+    private String URL = "https://api.openweathermap.org/";
 
     public static WeatherRepository getInstance(){
         if(instance == null){
@@ -16,18 +47,66 @@ public class WeatherRepository {
 
     }
 
-    public MutableLiveData<Weather> getWeather(){
-        //TODO implement API retrieval
+    public MutableLiveData<WeatherReport> getWeatherReport(){
 
-        setWeather();
-        MutableLiveData<Weather> data = new MutableLiveData<>();
-        data.setValue(weather);
-        return data;
+        retrieveWeatherReport();
+        return weatherReport;
     }
 
-    //test method
-    public void setWeather(){
-        weather = new Weather(800,"Clear","clear sky","01n");
+    public MutableLiveData<Coord> getLocation(Activity activity, FusedLocationProviderClient f){
+        retrieveLocation(activity,f);
+        return locationR;
     }
+
+    //retrieves report from api
+    private void retrieveWeatherReport(){
+        //weatherReport = new WeatherReport(800,"Clear","clear sky","01n");
+        //TODO implement
+
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        WeatherReportAPI weatherReportAPI = retrofit.create(WeatherReportAPI.class);
+
+        Call<WeatherReport> call = weatherReportAPI.getReport();
+
+        call.enqueue(new Callback<WeatherReport>() {
+            @Override
+            public void onResponse(Call<WeatherReport> call, Response<WeatherReport> response) {
+                if(!response.isSuccessful()) {
+                    Log.d("Error", String.valueOf(response.code()));
+                    return;
+                }
+               weatherReport.setValue(response.body());
+
+            }
+
+            @Override
+            public void onFailure(Call<WeatherReport> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+
+
+
+    }
+
+    public void retrieveLocation(Activity activity, FusedLocationProviderClient fusedLocationClient) {
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        Coord coord = new Coord((float)location.getLongitude(),(float)location.getLatitude());
+                        locationR.setValue(coord);
+                    }
+                });
+    }
+
+
+
 
 }

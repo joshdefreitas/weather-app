@@ -12,7 +12,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.weatherapp.Models.Weather;
+import com.example.weatherapp.Models.WeatherReport;
 import com.example.weatherapp.ViewModels.WeatherViewModel;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,16 +31,24 @@ public class MainActivity extends AppCompatActivity {
 
         weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
         weatherViewModel.init();
-        weatherViewModel.getCurrentWeather().observe(this, new Observer<Weather>() {
+
+        weatherViewModel.getCurrentWeather().observe(this, new Observer<WeatherReport>() {
             @Override
-            public void onChanged(Weather weather) {
-                int duration = Toast.LENGTH_SHORT;
-                CharSequence msg = "Weather Updated";
-                Toast toast = Toast.makeText(getApplicationContext(),msg,duration);
-                toast.show();
+            public void onChanged(WeatherReport weatherReport) {
+                if (weatherReport != null){
+                    int duration = Toast.LENGTH_SHORT;
+                    CharSequence msg = "Weather Report Received";
+                    Toast toast = Toast.makeText(getApplicationContext(),msg,duration);
+                    toast.show();
+                }
+
+
             }
         });
-        //TODO implement weather view
+
 
     }
+
+
+
 }

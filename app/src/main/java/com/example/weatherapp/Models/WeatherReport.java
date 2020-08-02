@@ -13,6 +13,8 @@ public class WeatherReport {
     private String mBase;
     @SerializedName("main")
     private Main mMain;
+    @SerializedName("visibility")
+    private int mVisibility;
     @SerializedName("wind")
     private Wind mWind;
     @SerializedName("clouds")
@@ -26,14 +28,15 @@ public class WeatherReport {
     private int miD;
     @SerializedName("name")
     private String mName;
-    @SerializedName("code")
+    @SerializedName("cod")
     private int mCode;
 
-    public WeatherReport(Coord mCoord, List<Weather> mWeather, String mBase, Main mMain, Wind mWind, Cloud mClouds, int mDt, Sys mSys, int mTimezone, int miD, String mName, int mCode) {
+    public WeatherReport(Coord mCoord, List<Weather> mWeather, String mBase, Main mMain, int mVisibility, Wind mWind, Cloud mClouds, int mDt, Sys mSys, int mTimezone, int miD, String mName, int mCode) {
         this.mCoord = mCoord;
         this.mWeather = mWeather;
         this.mBase = mBase;
         this.mMain = mMain;
+        this.mVisibility = mVisibility;
         this.mWind = mWind;
         this.mClouds = mClouds;
         this.mDt = mDt;
@@ -42,6 +45,17 @@ public class WeatherReport {
         this.miD = miD;
         this.mName = mName;
         this.mCode = mCode;
+    }
+    public WeatherReport(String s){
+        this.mName = s;
+    }
+
+    public int getmVisibility() {
+        return mVisibility;
+    }
+
+    public void setmVisibility(int mVisibility) {
+        this.mVisibility = mVisibility;
     }
 
     public Coord getmCoord() {
