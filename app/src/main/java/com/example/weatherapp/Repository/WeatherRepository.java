@@ -1,11 +1,15 @@
 package com.example.weatherapp.Repository;
 
+import android.app.Activity;
+import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.Models.Cloud;
 import com.example.weatherapp.Models.Coord;
 import com.example.weatherapp.Models.Main;
@@ -13,6 +17,10 @@ import com.example.weatherapp.Models.Sys;
 import com.example.weatherapp.Models.Weather;
 import com.example.weatherapp.Models.WeatherReport;
 import com.example.weatherapp.WebService.WeatherReportAPI;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
 
@@ -27,7 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class WeatherRepository {
     private static WeatherRepository instance;
     MutableLiveData<WeatherReport> weatherReport = new MutableLiveData<>();
-    MutableLiveData<Coord> locationRepo = new MutableLiveData<>();
+    MutableLiveData<Coord> locationR = new MutableLiveData<>();
 
     private String URL = "https://api.openweathermap.org/";
 
@@ -45,9 +53,9 @@ public class WeatherRepository {
         return weatherReport;
     }
 
-    public MutableLiveData<Coord> getLocation(){
-        retrieveLocation();
-        return locationRepo;
+    public MutableLiveData<Coord> getLocation(Activity activity, FusedLocationProviderClient f){
+        retrieveLocation(activity,f);
+        return locationR;
     }
 
     //retrieves report from api
@@ -87,9 +95,18 @@ public class WeatherRepository {
 
     }
 
-    private void retrieveLocation() {
-
+    public void retrieveLocation(Activity activity, FusedLocationProviderClient fusedLocationClient) {
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        Coord coord = new Coord((float)location.getLongitude(),(float)location.getLatitude());
+                        locationR.setValue(coord);
+                    }
+                });
     }
+
+
 
 
 }

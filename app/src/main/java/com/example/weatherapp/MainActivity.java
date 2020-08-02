@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.example.weatherapp.Models.Weather;
 import com.example.weatherapp.Models.WeatherReport;
 import com.example.weatherapp.ViewModels.WeatherViewModel;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,4 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
 }

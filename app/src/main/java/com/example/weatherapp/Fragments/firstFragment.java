@@ -2,8 +2,10 @@ package com.example.weatherapp.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,9 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +26,18 @@ import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.weatherapp.Models.Coord;
 import com.example.weatherapp.Models.Weather;
 import com.example.weatherapp.Models.WeatherReport;
 import com.example.weatherapp.R;
+import com.example.weatherapp.ViewModels.LocationViewModel;
 import com.example.weatherapp.ViewModels.WeatherViewModel;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Objects;
 
@@ -37,9 +49,12 @@ public class firstFragment extends Fragment {
     private TextView locText,wID,wMain;
     private Button locButton;
     private Button upButton;
-    private String currentLoc = "London";
+    Double Lat,Lon;
+    private Coord currentLoc;
     private WeatherViewModel weatherViewModel;
+    private LocationViewModel locationViewModel;
     private int LOCATION_PERMISSION_CODE = 1;
+    private FusedLocationProviderClient fusedLocationClient;
 
     public firstFragment() {
         // Required empty public constructor
@@ -57,21 +72,19 @@ public class firstFragment extends Fragment {
         wID = v.findViewById(R.id.wIDView);
         wMain = v.findViewById(R.id.wMainView);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+
         locButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                locText.setText(currentLoc);
+                if(currentLoc != null){
+                    locText.setText("Location Available");
+                }else{
+                    locText.setText("Location Unavailable");
+                }
             }
         });
-
-        upButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateLocation();
-            }
-        });
-
-
 
 
 
@@ -100,6 +113,21 @@ public class firstFragment extends Fragment {
                     wID.setText(weatherReport.getmName());
                     wMain.setText(weatherReport.getmWeather().get(0).getDescription());
                 }
+            }
+        });
+        locationViewModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
+
+        upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locationViewModel.init(getActivity(),fusedLocationClient);
+                locationViewModel.getLocation().observe(getViewLifecycleOwner(), new Observer<Coord>() {
+                    @Override
+                    public void onChanged(Coord coord) {
+                        currentLoc = coord;
+                        locText.setText("Lon: "+String.valueOf(currentLoc.getLon())+"\nLat: "+String.valueOf(currentLoc.getLat()));
+                    }
+                });
             }
         });
 
@@ -148,6 +176,8 @@ public class firstFragment extends Fragment {
             requestLocationPermission();
         }
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
