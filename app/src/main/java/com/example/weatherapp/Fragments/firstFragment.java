@@ -181,6 +181,7 @@ public class firstFragment extends Fragment {
                 locText.setText("Lon: "+String.valueOf(currentLoc.getLon())+"\nLat: "+String.valueOf(currentLoc.getLat()));
             }
         });
+
     }
 
 
