@@ -115,19 +115,24 @@ public class firstFragment extends Fragment {
                 }
             }
         });
+
+
         locationViewModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
 
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                locationViewModel.init(getActivity(),fusedLocationClient);
-                locationViewModel.getLocation().observe(getViewLifecycleOwner(), new Observer<Coord>() {
-                    @Override
-                    public void onChanged(Coord coord) {
-                        currentLoc = coord;
-                        locText.setText("Lon: "+String.valueOf(currentLoc.getLon())+"\nLat: "+String.valueOf(currentLoc.getLat()));
-                    }
-                });
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getActivity(), "You have already granted this permission!",
+                            Toast.LENGTH_SHORT).show();
+                    updateLocation();
+
+                } else {
+                    requestLocationPermission();
+                }
+
+
             }
         });
 
@@ -142,7 +147,7 @@ public class firstFragment extends Fragment {
     }
 
     private void requestLocationPermission(){
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+        if (shouldShowRequestPermissionRationale(
                 Manifest.permission.ACCESS_FINE_LOCATION)) {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Permission needed")
@@ -150,7 +155,7 @@ public class firstFragment extends Fragment {
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(getActivity(),
+                            requestPermissions(
                                     new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
                         }
                     })
@@ -162,27 +167,30 @@ public class firstFragment extends Fragment {
                     })
                     .create().show();
         } else {
-            ActivityCompat.requestPermissions(getActivity(),
+            requestPermissions(
                     new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
         }
     }
 
     private void updateLocation(){
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getContext(), "You have already granted this permission!",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            requestLocationPermission();
-        }
+        locationViewModel.init(getActivity(),fusedLocationClient);
+        locationViewModel.getLocation().observe(getViewLifecycleOwner(), new Observer<Coord>() {
+            @Override
+            public void onChanged(Coord coord) {
+                currentLoc = coord;
+                locText.setText("Lon: "+String.valueOf(currentLoc.getLon())+"\nLat: "+String.valueOf(currentLoc.getLat()));
+            }
+        });
     }
 
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        wMain.setText(String.valueOf(requestCode));
         if (requestCode == LOCATION_PERMISSION_CODE)  {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                updateLocation();
                 Toast.makeText(getActivity(), "Permission GRANTED", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getActivity(), "Permission DENIED", Toast.LENGTH_SHORT).show();
