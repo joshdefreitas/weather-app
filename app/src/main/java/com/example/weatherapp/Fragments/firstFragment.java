@@ -25,10 +25,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.weatherapp.Models.Coord;
 import com.example.weatherapp.Models.Weather;
 import com.example.weatherapp.Models.WeatherReport;
@@ -50,15 +52,17 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class firstFragment extends Fragment {
-    private TextView locText,wID,wMain,lLat,lLon;
+    private TextView locText,wID,wMain,lLat,lLon,detView;
     private Button locButton;
     private ImageButton refreshButton;
     private SwipeRefreshLayout refreshLayout;
+    private ImageView wImage;
     private double Lat,Lon;
     private Coord currentLoc = new Coord(0.000,0.000);
     private WeatherViewModel weatherViewModel;
     private LocationViewModel locationViewModel;
     private int LOCATION_PERMISSION_CODE = 1;
+    private String URL;
     private FusedLocationProviderClient fusedLocationClient;
 
     public firstFragment() {
@@ -76,6 +80,8 @@ public class firstFragment extends Fragment {
         wMain = v.findViewById(R.id.wMainView);
         lLat = v.findViewById(R.id.latView);
         lLon = v.findViewById(R.id.lonView);
+        wImage = v.findViewById(R.id.weatherImage);
+        detView = v.findViewById(R.id.detailView);
         refreshButton = v.findViewById(R.id.refButt);
         refreshLayout = v.findViewById(R.id.refreshLayout);
 
@@ -127,22 +133,42 @@ public class firstFragment extends Fragment {
 
 
     public void updateWeather(){
-        //TODO implement update weather
         weatherViewModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
         weatherViewModel.init(currentLoc.getLat(),currentLoc.getLon());
         weatherViewModel.getCurrentWeather().observe(getViewLifecycleOwner(), new Observer<WeatherReport>() {
             @Override
             public void onChanged(@Nullable WeatherReport weatherReport) {
-                if(weatherReport == null){
-                    //TODO implement
-                }
-                else{
-                    wID.setText(weatherReport.getmName());
-                    wMain.setText(String.valueOf(weatherReport.getmMain().getTemp()));
+                if(weatherReport != null){
+
+
+                    wID.setText(weatherReport.getmWeather().get(0).getMain());
+                    double rounded = Math.round(weatherReport.getmMain().getTemp() * 10) / 10.0;
+                    wMain.setText(rounded + "\u00B0" + "C");
                     locText.setText(weatherReport.getmName());
+                    detView.setText(
+                            "wind: \t" + weatherReport.getmWind().getSpeed() +"m/s" + "\n"+
+                            "max temp: \t" +weatherReport.getmMain().getTemp_max()+ "\u00B0" + "C" + "\n"+
+                            "min temp: \t" +weatherReport.getmMain().getTemp_min()+ "\u00B0" + "C" + "\n"+
+                            "humidity: \t" +weatherReport.getmMain().getHumidity()+ "\u0025" + "\n"+
+                            "pressure: \t" +weatherReport.getmMain().getPressure()+ "hPa" + "\n"
+
+                    );
+
+
+                    firstFragment.this.URL = "http://openweathermap.org/img/wn/"+weatherReport.getmWeather().get(0).getIcon() + "@2x.png";
+
+                    Glide.with(getContext())
+                            .load(URL)
+                            .fitCenter()
+                            .into(wImage);
+
                 }
+
+
             }
         });
+
+
     }
 
     private void requestLocationPermission(){
@@ -205,7 +231,7 @@ public class firstFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        wMain.setText(String.valueOf(requestCode));
+
         if (requestCode == LOCATION_PERMISSION_CODE)  {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 updateLocation();
