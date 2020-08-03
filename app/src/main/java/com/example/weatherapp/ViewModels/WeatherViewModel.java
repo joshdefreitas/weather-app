@@ -24,13 +24,13 @@ public class WeatherViewModel extends ViewModel {
     private WeatherReport weatherReport;
     private String URL = "https://api.openweathermap.org/";
 
-    public void init() {
-        if (currentWeather != null) {
-            return;
-        }
+    public void init(double mLat,double mLon) {
+//        if (currentWeather != null) {
+//            return;
+//        }
 
         wRepo = WeatherRepository.getInstance();
-        currentWeather = wRepo.getWeatherReport();
+        currentWeather = wRepo.getWeatherReport(mLat,mLon);
 
     }
 

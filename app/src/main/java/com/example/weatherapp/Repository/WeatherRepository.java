@@ -2,6 +2,7 @@ package com.example.weatherapp.Repository;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
@@ -38,6 +39,10 @@ public class WeatherRepository {
     MutableLiveData<Coord> locationR = new MutableLiveData<>();
 
     private String URL = "https://api.openweathermap.org/";
+    private double mLat = 49.262817;
+    private double mLon = -123.25385;
+    private final String mAPIKey = "b808aed785ba7a00d0078526c4a21883";
+    private final String UNITS = "metric";
 
     public static WeatherRepository getInstance(){
         if(instance == null){
@@ -47,9 +52,9 @@ public class WeatherRepository {
 
     }
 
-    public MutableLiveData<WeatherReport> getWeatherReport(){
+    public MutableLiveData<WeatherReport> getWeatherReport(double mLat,double mLon){
 
-        retrieveWeatherReport();
+        retrieveWeatherReport(mLat,mLon);
         return weatherReport;
     }
 
@@ -59,7 +64,7 @@ public class WeatherRepository {
     }
 
     //retrieves report from api
-    private void retrieveWeatherReport(){
+    private void retrieveWeatherReport(double mLat, double mLon){
         //weatherReport = new WeatherReport(800,"Clear","clear sky","01n");
         //TODO implement
 
@@ -72,7 +77,7 @@ public class WeatherRepository {
 
         WeatherReportAPI weatherReportAPI = retrofit.create(WeatherReportAPI.class);
 
-        Call<WeatherReport> call = weatherReportAPI.getReport();
+        Call<WeatherReport> call = weatherReportAPI.getReport(mLat,mLon,mAPIKey,UNITS);
 
         call.enqueue(new Callback<WeatherReport>() {
             @Override
@@ -100,13 +105,11 @@ public class WeatherRepository {
                 .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-                        Coord coord = new Coord((float)location.getLongitude(),(float)location.getLatitude());
-                        locationR.setValue(coord);
+                        Coord coord = new Coord(location.getLongitude(),location.getLatitude());
+                        WeatherRepository.instance.locationR.setValue(coord);
                     }
                 });
     }
-
-
 
 
 }

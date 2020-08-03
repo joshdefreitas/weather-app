@@ -5,9 +5,15 @@ import com.example.weatherapp.Models.WeatherReport;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface WeatherReportAPI {
 
-    @GET("data/2.5/weather?q=London&appid=b808aed785ba7a00d0078526c4a21883")
-    Call<WeatherReport> getReport();
+    @GET("data/2.5/weather")
+    Call<WeatherReport> getReport(
+            @Query("lat") double lat,
+            @Query("lon") double lon,
+            @Query("appid") String APIKey,
+            @Query("units") String unit
+    );
 }
