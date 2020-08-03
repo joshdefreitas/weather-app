@@ -17,12 +17,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -38,6 +40,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Objects;
@@ -49,7 +52,8 @@ import java.util.Objects;
 public class firstFragment extends Fragment {
     private TextView locText,wID,wMain,lLat,lLon;
     private Button locButton;
-    private Button upButton;
+    private ImageButton refreshButton;
+    private SwipeRefreshLayout refreshLayout;
     private double Lat,Lon;
     private Coord currentLoc = new Coord(0.000,0.000);
     private WeatherViewModel weatherViewModel;
@@ -68,37 +72,30 @@ public class firstFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_first, container, false);
         // Inflate the layout for this fragment
         locText = v.findViewById(R.id.locView);
-        locButton = v.findViewById(R.id.locButton);
-        upButton = v.findViewById(R.id.updateButton);
         wID = v.findViewById(R.id.wIDView);
         wMain = v.findViewById(R.id.wMainView);
         lLat = v.findViewById(R.id.latView);
         lLon = v.findViewById(R.id.lonView);
+        refreshButton = v.findViewById(R.id.refButt);
+        refreshLayout = v.findViewById(R.id.refreshLayout);
+
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-
-        locButton.setOnClickListener(new View.OnClickListener() {
+        refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentLoc != null){
-                    locText.setText("Location Available");
-                }else{
-                    locText.setText("Location Unavailable");
-                }
+                updateMethod();
+                Toast.makeText(getActivity(), "Weather Updated",
+                        Toast.LENGTH_SHORT).show();
             }
         });
-
-
 
         return v;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -110,23 +107,19 @@ public class firstFragment extends Fragment {
 
         locationViewModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
 
-        upButton.setOnClickListener(new View.OnClickListener() {
+
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getActivity(), "You have already granted this permission!",
-                            Toast.LENGTH_SHORT).show();
-                    updateLocation();
-
-
-                } else {
-                    requestLocationPermission();
-                }
-
+            public void onRefresh() {
+                updateMethod();
+                Toast.makeText(getActivity(), "Weather Updated",
+                        Toast.LENGTH_SHORT).show();
+                refreshLayout.setRefreshing(false);
             }
         });
 
+        updateMethod();
 
 
     }
@@ -183,8 +176,10 @@ public class firstFragment extends Fragment {
         locationViewModel.getLocation().observe(getViewLifecycleOwner(), new Observer<Coord>() {
             @Override
             public void onChanged(Coord coord) {
-                lLat.setText(String.valueOf(coord.getLat()));
-                lLon.setText(String.valueOf(coord.getLon()));
+                String latString = "Lat: " + coord.getLat();
+                String lonString = "Lon: " + coord.getLon();
+                lLat.setText(latString);
+                lLon.setText(lonString);
                 firstFragment.this.currentLoc.setLon(coord.getLon());
                 firstFragment.this.currentLoc.setLat(coord.getLat());
                 firstFragment.this.updateWeather();
@@ -194,7 +189,16 @@ public class firstFragment extends Fragment {
 
     }
 
+    private void updateMethod(){
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
+            updateLocation();
+
+        } else {
+            requestLocationPermission();
+        }
+    }
 
 
 
