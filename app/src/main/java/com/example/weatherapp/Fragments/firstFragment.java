@@ -25,10 +25,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.weatherapp.Models.Coord;
 import com.example.weatherapp.Models.Weather;
 import com.example.weatherapp.Models.WeatherReport;
@@ -54,11 +56,13 @@ public class firstFragment extends Fragment {
     private Button locButton;
     private ImageButton refreshButton;
     private SwipeRefreshLayout refreshLayout;
+    private ImageView wImage;
     private double Lat,Lon;
     private Coord currentLoc = new Coord(0.000,0.000);
     private WeatherViewModel weatherViewModel;
     private LocationViewModel locationViewModel;
     private int LOCATION_PERMISSION_CODE = 1;
+    private String URL;
     private FusedLocationProviderClient fusedLocationClient;
 
     public firstFragment() {
@@ -76,6 +80,7 @@ public class firstFragment extends Fragment {
         wMain = v.findViewById(R.id.wMainView);
         lLat = v.findViewById(R.id.latView);
         lLon = v.findViewById(R.id.lonView);
+        wImage = v.findViewById(R.id.weatherImage);
         refreshButton = v.findViewById(R.id.refButt);
         refreshLayout = v.findViewById(R.id.refreshLayout);
 
@@ -127,22 +132,32 @@ public class firstFragment extends Fragment {
 
 
     public void updateWeather(){
-        //TODO implement update weather
         weatherViewModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
         weatherViewModel.init(currentLoc.getLat(),currentLoc.getLon());
         weatherViewModel.getCurrentWeather().observe(getViewLifecycleOwner(), new Observer<WeatherReport>() {
             @Override
             public void onChanged(@Nullable WeatherReport weatherReport) {
-                if(weatherReport == null){
-                    //TODO implement
-                }
-                else{
-                    wID.setText(weatherReport.getmName());
+                if(weatherReport != null){
+                    wID.setText(weatherReport.getmWeather().get(0).getMain());
                     wMain.setText(String.valueOf(weatherReport.getmMain().getTemp()));
                     locText.setText(weatherReport.getmName());
+
+                    firstFragment.this.URL = "http://openweathermap.org/img/wn/"+weatherReport.getmWeather().get(0).getIcon() + "@2x.png";
+
+                    Glide.with(getContext())
+                            .load(URL)
+                            .fitCenter()
+                            .into(wImage);
+
                 }
+
+
+
+
             }
         });
+
+
     }
 
     private void requestLocationPermission(){
