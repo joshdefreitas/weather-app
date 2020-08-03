@@ -52,7 +52,7 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class firstFragment extends Fragment {
-    private TextView locText,wID,wMain,lLat,lLon;
+    private TextView locText,wID,wMain,lLat,lLon,detView;
     private Button locButton;
     private ImageButton refreshButton;
     private SwipeRefreshLayout refreshLayout;
@@ -81,6 +81,7 @@ public class firstFragment extends Fragment {
         lLat = v.findViewById(R.id.latView);
         lLon = v.findViewById(R.id.lonView);
         wImage = v.findViewById(R.id.weatherImage);
+        detView = v.findViewById(R.id.detailView);
         refreshButton = v.findViewById(R.id.refButt);
         refreshLayout = v.findViewById(R.id.refreshLayout);
 
@@ -138,9 +139,21 @@ public class firstFragment extends Fragment {
             @Override
             public void onChanged(@Nullable WeatherReport weatherReport) {
                 if(weatherReport != null){
+
+
                     wID.setText(weatherReport.getmWeather().get(0).getMain());
-                    wMain.setText(String.valueOf(weatherReport.getmMain().getTemp()));
+                    double rounded = Math.round(weatherReport.getmMain().getTemp() * 10) / 10.0;
+                    wMain.setText(rounded + "\u00B0" + "C");
                     locText.setText(weatherReport.getmName());
+                    detView.setText(
+                            "wind: \t" + weatherReport.getmWind().getSpeed() +"m/s" + "\n"+
+                            "max temp: \t" +weatherReport.getmMain().getTemp_max()+ "\u00B0" + "C" + "\n"+
+                            "min temp: \t" +weatherReport.getmMain().getTemp_min()+ "\u00B0" + "C" + "\n"+
+                            "humidity: \t" +weatherReport.getmMain().getHumidity()+ "\u0025" + "\n"+
+                            "pressure: \t" +weatherReport.getmMain().getPressure()+ "hPa" + "\n"
+
+                    );
+
 
                     firstFragment.this.URL = "http://openweathermap.org/img/wn/"+weatherReport.getmWeather().get(0).getIcon() + "@2x.png";
 
@@ -150,8 +163,6 @@ public class firstFragment extends Fragment {
                             .into(wImage);
 
                 }
-
-
 
 
             }
@@ -220,7 +231,7 @@ public class firstFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        wMain.setText(String.valueOf(requestCode));
+
         if (requestCode == LOCATION_PERMISSION_CODE)  {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 updateLocation();
