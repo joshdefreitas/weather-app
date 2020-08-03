@@ -29,22 +29,22 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this,  R.id.fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
-        weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
-        weatherViewModel.init();
+//        weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
+//        weatherViewModel.init();
 
-        weatherViewModel.getCurrentWeather().observe(this, new Observer<WeatherReport>() {
-            @Override
-            public void onChanged(WeatherReport weatherReport) {
-                if (weatherReport != null){
-                    int duration = Toast.LENGTH_SHORT;
-                    CharSequence msg = "Weather Report Received";
-                    Toast toast = Toast.makeText(getApplicationContext(),msg,duration);
-                    toast.show();
-                }
-
-
-            }
-        });
+//        weatherViewModel.getCurrentWeather().observe(this, new Observer<WeatherReport>() {
+//            @Override
+//            public void onChanged(WeatherReport weatherReport) {
+//                if (weatherReport != null){
+//                    int duration = Toast.LENGTH_SHORT;
+//                    CharSequence msg = "Weather Report Received";
+//                    Toast toast = Toast.makeText(getApplicationContext(),msg,duration);
+//                    toast.show();
+//                }
+//
+//
+//            }
+//        });
 
 
     }

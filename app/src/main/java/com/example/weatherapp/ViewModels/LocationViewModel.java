@@ -15,9 +15,9 @@ public class LocationViewModel extends ViewModel {
     private WeatherRepository cRepo;
 
     public void init(Activity a, FusedLocationProviderClient f) {
-        if (location != null) {
-            return;
-        }
+//        if (location != null) {
+//            return;
+//        }
 
         cRepo = WeatherRepository.getInstance();
         location = cRepo.getLocation(a,f);

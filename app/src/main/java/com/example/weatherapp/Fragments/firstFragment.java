@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -104,20 +105,7 @@ public class firstFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 
-        weatherViewModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
-        weatherViewModel.getCurrentWeather().observe(getViewLifecycleOwner(), new Observer<WeatherReport>() {
-            @Override
-            public void onChanged(@Nullable WeatherReport weatherReport) {
-                if(weatherReport == null){
-                    //TODO implement
-                }
-                else{
-                    wID.setText(weatherReport.getmName());
-                    wMain.setText(String.valueOf(weatherReport.getmMain().getTemp()));
-                    locText.setText(weatherReport.getmName());
-                }
-            }
-        });
+
 
 
         locationViewModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
@@ -131,10 +119,10 @@ public class firstFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
                     updateLocation();
 
+
                 } else {
                     requestLocationPermission();
                 }
-
 
             }
         });
@@ -147,6 +135,21 @@ public class firstFragment extends Fragment {
 
     public void updateWeather(){
         //TODO implement update weather
+        weatherViewModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
+        weatherViewModel.init(currentLoc.getLat(),currentLoc.getLon());
+        weatherViewModel.getCurrentWeather().observe(getViewLifecycleOwner(), new Observer<WeatherReport>() {
+            @Override
+            public void onChanged(@Nullable WeatherReport weatherReport) {
+                if(weatherReport == null){
+                    //TODO implement
+                }
+                else{
+                    wID.setText(weatherReport.getmName());
+                    wMain.setText(String.valueOf(weatherReport.getmMain().getTemp()));
+                    locText.setText(weatherReport.getmName());
+                }
+            }
+        });
     }
 
     private void requestLocationPermission(){
@@ -184,10 +187,15 @@ public class firstFragment extends Fragment {
                 lLon.setText(String.valueOf(coord.getLon()));
                 firstFragment.this.currentLoc.setLon(coord.getLon());
                 firstFragment.this.currentLoc.setLat(coord.getLat());
+                firstFragment.this.updateWeather();
             }
         });
 
+
     }
+
+
+
 
 
 

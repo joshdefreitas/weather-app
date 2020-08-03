@@ -42,7 +42,7 @@ public class WeatherRepository {
     private double mLat = 49.262817;
     private double mLon = -123.25385;
     private final String mAPIKey = "b808aed785ba7a00d0078526c4a21883";
-    private final String units = "metric";
+    private final String UNITS = "metric";
 
     public static WeatherRepository getInstance(){
         if(instance == null){
@@ -52,9 +52,9 @@ public class WeatherRepository {
 
     }
 
-    public MutableLiveData<WeatherReport> getWeatherReport(){
+    public MutableLiveData<WeatherReport> getWeatherReport(double mLat,double mLon){
 
-        retrieveWeatherReport();
+        retrieveWeatherReport(mLat,mLon);
         return weatherReport;
     }
 
@@ -64,7 +64,7 @@ public class WeatherRepository {
     }
 
     //retrieves report from api
-    private void retrieveWeatherReport(){
+    private void retrieveWeatherReport(double mLat, double mLon){
         //weatherReport = new WeatherReport(800,"Clear","clear sky","01n");
         //TODO implement
 
@@ -77,7 +77,7 @@ public class WeatherRepository {
 
         WeatherReportAPI weatherReportAPI = retrofit.create(WeatherReportAPI.class);
 
-        Call<WeatherReport> call = weatherReportAPI.getReport(mLat,mLon,mAPIKey,units);
+        Call<WeatherReport> call = weatherReportAPI.getReport(mLat,mLon,mAPIKey,UNITS);
 
         call.enqueue(new Callback<WeatherReport>() {
             @Override
@@ -106,7 +106,7 @@ public class WeatherRepository {
                     @Override
                     public void onSuccess(Location location) {
                         Coord coord = new Coord(location.getLongitude(),location.getLatitude());
-                        locationR.setValue(coord);
+                        WeatherRepository.instance.locationR.setValue(coord);
                     }
                 });
     }
