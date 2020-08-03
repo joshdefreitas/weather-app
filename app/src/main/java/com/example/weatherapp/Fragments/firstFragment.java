@@ -176,7 +176,7 @@ public class firstFragment extends Fragment {
                 Manifest.permission.ACCESS_FINE_LOCATION)) {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Permission needed")
-                    .setMessage("This permission is needed because of this and that")
+                    .setMessage("Location is needed to retrieve weather")
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
