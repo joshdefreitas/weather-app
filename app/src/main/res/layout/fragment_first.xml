@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".Fragments.firstFragment">
+    tools:context=".Fragments.weatherFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
@@ -84,15 +84,15 @@
                 android:textColor="#ffffff"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.064"
+                app:layout_constraintHorizontal_bias="0.063"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.962" />
 
             <TextView
                 android:id="@+id/latView"
-                android:layout_width="113dp"
-                android:layout_height="19dp"
+                android:layout_width="123dp"
+                android:layout_height="18dp"
                 android:text="@string/blank"
                 android:textColor="#ffffff"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -142,6 +142,7 @@
                 app:layout_constraintVertical_bias="0.706" />
 
             <View
+                android:id="@+id/view"
                 android:layout_width="400sp"
                 android:layout_height="1dp"
                 android:background="#ffffff"
@@ -149,6 +150,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/lastUpView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/blank"
+                android:textColor="#ffffff"
+                android:layout_marginStart="60dp"
+                android:layout_marginLeft="60dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/refButt"
+                app:layout_constraintHorizontal_bias="0.936"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.035" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
