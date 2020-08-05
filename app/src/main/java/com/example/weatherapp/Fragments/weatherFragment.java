@@ -64,6 +64,8 @@ public class weatherFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_first, container, false);
         // Inflate the layout for this fragment
+
+        //assign class variable to views
         locText = v.findViewById(R.id.locView);
         wID = v.findViewById(R.id.wIDView);
         wMain = v.findViewById(R.id.wMainView);
@@ -76,9 +78,13 @@ public class weatherFragment extends Fragment {
         refreshLayout = v.findViewById(R.id.refreshLayout);
 
 
+        //fusedLocationclient needed to retrieve location
+        if(getActivity() != null){
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        }
 
+        //refresh button response
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,13 +104,14 @@ public class weatherFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 
+        //initializing location view model
+        if(getActivity() != null){
+            locationViewModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
+
+        }
 
 
-
-        locationViewModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
-
-
-
+        // swipe to refresh response
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -121,7 +128,8 @@ public class weatherFragment extends Fragment {
     }
 
 
-
+    //updates weather model based on location and observes changes
+    //displays weather results on UI
     public void updateWeather(){
         weatherViewModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
         weatherViewModel.init(currentLoc.getLat(),currentLoc.getLon());
@@ -135,22 +143,24 @@ public class weatherFragment extends Fragment {
                     double rounded = Math.round(weatherReport.getmMain().getTemp() * 10) / 10.0;
                     wMain.setText(rounded + "\u00B0" + "C");
                     locText.setText(weatherReport.getmName());
-                    detView.setText(
-                            "wind: \t" + weatherReport.getmWind().getSpeed() +"m/s" + "\n"+
+                    String weatherDetails = "wind: \t" + weatherReport.getmWind().getSpeed() +"m/s" + "\n"+
                             "max temp: \t" +weatherReport.getmMain().getTemp_max()+ "\u00B0" + "C" + "\n"+
                             "min temp: \t" +weatherReport.getmMain().getTemp_min()+ "\u00B0" + "C" + "\n"+
                             "humidity: \t" +weatherReport.getmMain().getHumidity()+ "\u0025" + "\n"+
-                            "pressure: \t" +weatherReport.getmMain().getPressure()+ "hPa" + "\n"
+                            "pressure: \t" +weatherReport.getmMain().getPressure()+ "hPa" + "\n";
 
-                    );
+
+                    detView.setText(weatherDetails);
 
 
                     weatherFragment.this.URL = "http://openweathermap.org/img/wn/"+weatherReport.getmWeather().get(0).getIcon() + "@2x.png";
 
-                    Glide.with(getContext())
-                            .load(URL)
-                            .fitCenter()
-                            .into(wImage);
+                    if(getContext() != null){
+                        Glide.with(getContext())
+                                .load(URL)
+                                .fitCenter()
+                                .into(wImage);
+                    }
 
                 }
 
@@ -161,6 +171,7 @@ public class weatherFragment extends Fragment {
 
     }
 
+    //reminds user in a dialog that location is needed to retrieve weather
     private void requestLocationPermission(){
         if (shouldShowRequestPermissionRationale(
                 Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -187,6 +198,8 @@ public class weatherFragment extends Fragment {
         }
     }
 
+
+    //updates location model and observes changes made
     private void updateLocation(){
         locationViewModel.init(getActivity(),fusedLocationClient);
         locationViewModel.getLocation().observe(getViewLifecycleOwner(), new Observer<Coord>() {
@@ -205,24 +218,30 @@ public class weatherFragment extends Fragment {
 
     }
 
+    //method to update all information
     private void updateMethod(){
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            updateLocation();
+        if(getActivity() != null){
+            if (ContextCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-        } else {
-            requestLocationPermission();
+                updateLocation();
+
+            } else {
+                requestLocationPermission();
+            }
         }
+
 
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa",
                 Locale.ENGLISH);
-        lastUp.setText("Last Update: " + sdf.format(Calendar.getInstance().getTime()));
+        String upText = "Last Update: " + sdf.format(Calendar.getInstance().getTime());
+        lastUp.setText(upText);
     }
 
 
 
-
+    //confirms location permission results with user
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
